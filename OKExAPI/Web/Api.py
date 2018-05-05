@@ -1,10 +1,10 @@
 import requests
 from . import Credential
+import os
 
 
 def login(login_credential: Credential.Credential) -> str:
     headers = {
-        'Host': 'www.okex.com',
         'loginname': login_credential.login_name,
         'content-type': 'application/json',
         'referer': 'https://www.okex.com/account/login?forward=/spot/trade',
@@ -26,5 +26,48 @@ def login(login_credential: Credential.Credential) -> str:
         params=params,
         data=str(data)
     ).json()
-
     return response['data']['token']
+
+
+def get_cached_token() -> str:
+    cached_token_path = '.cached_token'
+    if os.path.isfile(cached_token_path):
+        return open(cached_token_path, 'r').read()
+    return None
+
+
+def get_token(login_credential: Credential.Credential) -> str:
+    cached_token = get_cached_token()
+    if cached_token:
+        return cached_token
+    return login(login_credential)
+
+
+def bills(token: str,
+          currency_id: int = -1,
+          begin_date: int = 0,
+          end_date: int = 0,
+          is_history: bool = False,
+          page: int = 1,
+          per_page: int = 20,
+          record_type: int = 0):
+
+    headers = {
+        'authorization': token,
+        'accept': 'application/json',
+        'referer': 'https://www.okex.com/account/balance/accountRecords'
+    }
+
+    data = {
+        "currencyId": currency_id,
+        "recordType": record_type,
+        "beginDate": begin_date,
+        "endDate": end_date,
+        "isHistory": str(is_history).lower(),
+        "page": {
+            "page": page,
+            "perPage": per_page
+        }
+    }
+    response = requests.post('https://www.okex.com/v2/spot/bills/bills', headers=headers, data=str(data))
+    return response.json()

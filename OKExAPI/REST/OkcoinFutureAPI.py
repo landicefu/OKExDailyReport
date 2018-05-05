@@ -1,15 +1,16 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # 用于访问OKCOIN 期货REST API
+
+from .. import Common
 from .HttpMD5Util import buildMySign, httpGet, httpPost
 
 
 class OKCoinFuture:
 
-    def __init__(self, url, apikey, secretkey):
+    def __init__(self, url: str, credential: Common.Credential):
         self.__url = url
-        self.__apikey = apikey
-        self.__secretkey = secretkey
+        self.__credential = credential
 
     # OKCOIN期货行情信息
     def future_ticker(self, symbol, contractType):
@@ -68,26 +69,26 @@ class OKCoinFuture:
     def future_userinfo(self):
         FUTURE_USERINFO = "/api/v1/future_userinfo.do?"
         params = {}
-        params['api_key'] = self.__apikey
-        params['sign'] = buildMySign(params, self.__secretkey)
+        params['api_key'] = self.__credential.api_key
+        params['sign'] = buildMySign(params, self.__credential.secret_key)
         return httpPost(self.__url, FUTURE_USERINFO, params)
 
     # 期货全仓持仓信息
     def future_position(self, symbol, contractType):
         FUTURE_POSITION = "/api/v1/future_position.do?"
         params = {
-            'api_key': self.__apikey,
+            'api_key': self.__credential.api_key,
             'symbol': symbol,
             'contract_type': contractType
         }
-        params['sign'] = buildMySign(params, self.__secretkey)
+        params['sign'] = buildMySign(params, self.__credential.secret_key)
         return httpPost(self.__url, FUTURE_POSITION, params)
 
     # 期货下单
     def future_trade(self, symbol, contractType, price='', amount='', tradeType='', matchPrice='', leverRate=''):
         FUTURE_TRADE = "/api/v1/future_trade.do?"
         params = {
-            'api_key': self.__apikey,
+            'api_key': self.__credential.api_key,
             'symbol': symbol,
             'contract_type': contractType,
             'amount': amount,
@@ -97,39 +98,39 @@ class OKCoinFuture:
         }
         if price:
             params['price'] = price
-        params['sign'] = buildMySign(params, self.__secretkey)
+        params['sign'] = buildMySign(params, self.__credential.secret_key)
         return httpPost(self.__url, FUTURE_TRADE, params)
 
     # 期货批量下单
     def future_batchTrade(self, symbol, contractType, orders_data, leverRate):
         FUTURE_BATCH_TRADE = "/api/v1/future_batch_trade.do?"
         params = {
-            'api_key': self.__apikey,
+            'api_key': self.__credential.api_key,
             'symbol': symbol,
             'contract_type': contractType,
             'orders_data': orders_data,
             'lever_rate': leverRate
         }
-        params['sign'] = buildMySign(params, self.__secretkey)
+        params['sign'] = buildMySign(params, self.__credential.secret_key)
         return httpPost(self.__url, FUTURE_BATCH_TRADE, params)
 
     # 期货取消订单
     def future_cancel(self, symbol, contractType, orderId):
         FUTURE_CANCEL = "/api/v1/future_cancel.do?"
         params = {
-            'api_key': self.__apikey,
+            'api_key': self.__credential.api_key,
             'symbol': symbol,
             'contract_type': contractType,
             'order_id': orderId
         }
-        params['sign'] = buildMySign(params, self.__secretkey)
+        params['sign'] = buildMySign(params, self.__credential.secret_key)
         return httpPost(self.__url, FUTURE_CANCEL, params)
 
     # 期货获取订单信息
     def future_orderinfo(self, symbol, contractType, orderId, status, currentPage, pageLength):
         FUTURE_ORDERINFO = "/api/v1/future_order_info.do?"
         params = {
-            'api_key': self.__apikey,
+            'api_key': self.__credential.api_key,
             'symbol': symbol,
             'contract_type': contractType,
             'order_id': orderId,
@@ -137,24 +138,24 @@ class OKCoinFuture:
             'current_page': currentPage,
             'page_length': pageLength
         }
-        params['sign'] = buildMySign(params, self.__secretkey)
+        params['sign'] = buildMySign(params, self.__credential.secret_key)
         return httpPost(self.__url, FUTURE_ORDERINFO, params)
 
     # 期货逐仓账户信息
     def future_userinfo_4fix(self):
         FUTURE_INFO_4FIX = "/api/v1/future_userinfo_4fix.do?"
-        params = {'api_key': self.__apikey}
-        params['sign'] = buildMySign(params, self.__secretkey)
+        params = {'api_key': self.__credential.api_key}
+        params['sign'] = buildMySign(params, self.__credential.secret_key)
         return httpPost(self.__url, FUTURE_INFO_4FIX, params)
 
     # 期货逐仓持仓信息
     def future_position_4fix(self, symbol, contractType, type1):
         FUTURE_POSITION_4FIX = "/api/v1/future_position_4fix.do?"
         params = {
-            'api_key': self.__apikey,
+            'api_key': self.__credential.api_key,
             'symbol': symbol,
             'contract_type': contractType,
             'type': type1
         }
-        params['sign'] = buildMySign(params, self.__secretkey)
+        params['sign'] = buildMySign(params, self.__credential.secret_key)
         return httpPost(self.__url, FUTURE_POSITION_4FIX, params)

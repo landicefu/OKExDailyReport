@@ -6,7 +6,6 @@ import http.client
 import urllib
 import json
 import hashlib
-import time
 
 
 def buildMySign(params, secretKey):

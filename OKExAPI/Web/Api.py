@@ -1,9 +1,26 @@
 import requests
-from . import LoginCredential
 import os
+import json
 
 
-def login(login_credential: LoginCredential.LoginCredential) -> str:
+class LoginCredential:
+
+    def __init__(self, area_code: str, login_name: str, password: str):
+        self.area_code = area_code
+        self.login_name = login_name
+        self.password = password
+
+    @staticmethod
+    def load_from_file(file_path):
+        json_data = json.loads(open(file_path, 'r').read())
+        return LoginCredential(
+            json_data['areaCode'],
+            json_data['loginName'],
+            json_data['password']
+        )
+
+
+def login(login_credential: LoginCredential) -> str:
     headers = {
         'loginname': login_credential.login_name,
         'content-type': 'application/json',
@@ -36,7 +53,7 @@ def get_cached_token() -> str:
     return None
 
 
-def get_token(login_credential: LoginCredential.LoginCredential) -> str:
+def get_token(login_credential: LoginCredential) -> str:
     cached_token = get_cached_token()
     if cached_token:
         return cached_token

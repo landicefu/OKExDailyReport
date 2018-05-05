@@ -2,9 +2,12 @@ import json
 from OKExAPI.Common import ApiCredential
 from OKExAPI import Web
 from OKExAPI.REST_V1 import OkcoinSpotAPI
+import ExchangeRateApi
 
 OKEX_BASE_URL = 'www.okex.com'
 BTC_SKIP_THRESHOLD = 0.00001
+EXCHANGE_API_TOKEN = open('.exchange_api_token', 'r').read().strip()
+TARGET_CURRENCY = 'TWD'
 
 
 def over_threshold(balance_data):
@@ -32,7 +35,12 @@ def process():
                 )
             )
     btc_value_usdt = float(spot.ticker('btc_usdt')['ticker']['last'])
-    print("Total %f in BTC ; %f in USDT" % (total_value_btc, btc_value_usdt * total_value_btc))
+    total_value_usdt = btc_value_usdt * total_value_btc
+    print("Total %f in BTC ; %f in USDT" % (total_value_btc, total_value_usdt))
+    if TARGET_CURRENCY != 'USD':
+        total_value_target_currency = ExchangeRateApi.get_exchange_rate(
+            EXCHANGE_API_TOKEN, 'USD', TARGET_CURRENCY, total_value_usdt)
+        print("Total %f in %s" % (total_value_target_currency, TARGET_CURRENCY))
 
 
 if __name__ == '__main__':

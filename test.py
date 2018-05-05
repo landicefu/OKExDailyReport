@@ -13,5 +13,4 @@ login_credential = Api.LoginCredential.load_from_file('.login_secret.json')
 api_credential = ApiCredential.load_from_file('.secret.json')
 token = Api.get_token(login_credential)
 
-spot = OkcoinSpotAPI.OKCoinSpot(OKEX_BASE_URL, api_credential)
-print(spot.kLine('btc_usdt', '1day'))
+print(Api.user_balance(token))

@@ -4,6 +4,7 @@
 import requests
 import os
 import json
+from datetime import datetime
 
 
 class LoginCredential:
@@ -23,7 +24,7 @@ class LoginCredential:
         )
 
 
-def login(login_credential: LoginCredential) -> str:
+def login(login_credential: LoginCredential, save_cache: bool = True) -> str:
     headers = {
         'loginname': login_credential.login_name,
         'content-type': 'application/json',
@@ -46,13 +47,22 @@ def login(login_credential: LoginCredential) -> str:
         params=params,
         data=str(data)
     ).json()
-    return response['data']['token']
+    token = response['data']['token']
+    if save_cache:
+        with open(".cached_token", "w") as cache_file:
+            print(json.dumps(response), file=cache_file)
+    return token
 
 
 def get_cached_token() -> str:
     cached_token_path = '.cached_token'
     if os.path.isfile(cached_token_path):
-        return open(cached_token_path, 'r').read()
+        with open(cached_token_path, 'r') as file:
+            text = file.read()
+        token_json = json.loads(text)
+        due = datetime.fromtimestamp(token_json['data']['pastDue']/1000)
+        if (due - datetime.now()).total_seconds() > 60 * 30:
+            return token_json['data']['token']
     return None
 
 

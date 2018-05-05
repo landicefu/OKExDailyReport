@@ -10,4 +10,4 @@ OKEx_BASE_URL = 'www.okex.com'
 credential = Credential.load_from_file('.secret.json')
 
 spot = OKCoinSpot(OKEx_BASE_URL, credential)
-print (spot.ticker('btc_usdt'))
+print(spot.userinfo())

@@ -4,6 +4,7 @@
 import requests
 import os
 import json
+import uuid
 from datetime import datetime
 
 
@@ -24,10 +25,40 @@ class LoginCredential:
         )
 
 
+def login_step2(device_id: str, token: str, step_code: str, step2type: str):
+    headers = {
+        'devid': device_id,
+        'referer': 'https://www.okex.com/account/login',
+        'authorization': token,
+    }
+
+    params = (
+        ('stepCode', step_code),
+        ('step2Type', step2type),
+    )
+    response = requests.get('https://www.okex.com/v3/users/login-auth/login-step2', headers=headers, params=params).json()
+    return response
+
+
+def get_uuid():
+    if os.path.isfile('.uuid'):
+        with open('.uuid', 'r') as file:
+            device_uuid = file.read().strip()
+        return device_uuid
+    device_uuid = str(uuid.uuid1())
+    with open('.uuid', 'w') as file:
+        print(device_uuid, file=file)
+    return device_uuid
+
+
 def login(login_credential: LoginCredential, save_cache: bool = True) -> str:
+    print('start login')
+    import requests
+
+    device_id = get_uuid()
     headers = {
         'loginname': login_credential.login_name,
-        'content-type': 'application/json',
+        'devid': device_id,
         'referer': 'https://www.okex.com/account/login?forward=/spot/trade',
     }
 
@@ -41,17 +72,22 @@ def login(login_credential: LoginCredential, save_cache: bool = True) -> str:
         "password": login_credential.password
     }
 
-    response = requests.post(
-        'https://www.okex.com/v3/users/login/login',
-        headers=headers,
-        params=params,
-        data=str(data)
-    ).json()
+    response = requests.post('https://www.okex.com/v3/users/login/login', headers=headers, params=params, data=str(data)).json()
     token = response['data']['token']
+    if 'step2Type' in response['data'].keys():
+        print('Need to do step 2 verification')
+        step2type = response['data']['step2Type']
+        if step2type == 1:
+            print('Google Authentication Code: ', end='')
+            step2code = input()
+        response = login_step2(device_id, token, step2code, step2type)
+        token = response['data']['token']
 
+    print('token=' + token)
     if save_cache:
         with open(".cached_token", "w") as cache_file:
             print(json.dumps(response), file=cache_file)
+            print('token was saved')
     return token
 
 
@@ -63,7 +99,10 @@ def get_cached_token() -> str:
         token_json = json.loads(text)
         due = datetime.fromtimestamp(token_json['data']['pastDue']/1000)
         if (due - datetime.now()).total_seconds() > 60 * 30:
-            return token_json['data']['token']
+            token = token_json['data']['token']
+            print('cached token is available: ' + token)
+            return token
+    print('cached token is not available')
     return None
 
 

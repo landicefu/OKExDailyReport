@@ -43,18 +43,17 @@ def get_token(login_credential: Credential.Credential) -> str:
     return login(login_credential)
 
 
-def bills(token: str,
-          currency_id: int = -1,
-          begin_date: int = 0,
-          end_date: int = 0,
-          is_history: bool = False,
-          page: int = 1,
-          per_page: int = 20,
-          record_type: int = 0):
+def user_bills(token: str,
+               currency_id: int = -1,
+               begin_date: int = 0,
+               end_date: int = 0,
+               is_history: bool = False,
+               page: int = 1,
+               per_page: int = 20,
+               record_type: int = 0):
 
     headers = {
         'authorization': token,
-        'accept': 'application/json',
         'referer': 'https://www.okex.com/account/balance/accountRecords'
     }
 
@@ -70,4 +69,22 @@ def bills(token: str,
         }
     }
     response = requests.post('https://www.okex.com/v2/spot/bills/bills', headers=headers, data=str(data))
+    return response.json()
+
+
+def user_balance(token: str):
+    headers = {
+        'authorization': token,
+        'referer': 'https://www.okex.com/account/balance',
+    }
+
+    params = (
+        ('transferFrom', '1'),
+    )
+
+    response = requests.get(
+        'https://www.okex.com/v2/asset/accounts/user-currency-balance',
+        headers=headers,
+        params=params
+    )
     return response.json()

@@ -8,7 +8,7 @@ from .HttpMD5Util import buildMySign, httpGet, httpPost
 
 class OKCoinFuture:
 
-    def __init__(self, url: str, credential: Common.Credential):
+    def __init__(self, url: str, credential: Common.ApiCredential):
         self.__url = url
         self.__credential = credential
 

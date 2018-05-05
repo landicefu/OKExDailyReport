@@ -110,8 +110,14 @@ ERROR_CODES = {
     1218: '下单失败，请稍后再试',
 }
 
+KLINE_TYPES = [
+    '1min', '3min', '5min', '15min', '30min',
+    '1hour', '2hour', '4hour', '6hour', '12hour',
+    '1day', '3day',
+    '1week']
 
-class Credential:
+
+class ApiCredential:
     def __init__(self, api_key: str, secret_key: str):
         self.api_key = api_key
         self.secret_key = secret_key
@@ -119,7 +125,7 @@ class Credential:
     @staticmethod
     def load_from_file(file_path):
         json_data = json.loads(open(file_path, 'r').read())
-        return Credential(
+        return ApiCredential(
             json_data['apiKey'],
             json_data['secretKey']
         )

@@ -8,7 +8,7 @@ from .HttpMD5Util import buildMySign, httpGet, httpPost
 
 class OKCoinSpot:
 
-    def __init__(self, url: str, credential: Common.Credential):
+    def __init__(self, url: str, credential: Common.ApiCredential):
         self.__url = url
         self.__credential = credential
 
@@ -28,8 +28,7 @@ class OKCoinSpot:
             params = 'symbol=%(symbol)s' % {'symbol': symbol}
         return httpGet(self.__url, DEPTH_RESOURCE, params)
 
-        # 获取OKCOIN现货历史交易信息
-
+    # 获取OKCOIN现货历史交易信息
     def trades(self, symbol=''):
         TRADES_RESOURCE = "/api/v1/trades.do"
         params = ''
@@ -37,8 +36,20 @@ class OKCoinSpot:
             params = 'symbol=%(symbol)s' % {'symbol': symbol}
         return httpGet(self.__url, TRADES_RESOURCE, params)
 
+    # 獲取K線資料
+    def kLine(self, symbol: str, type: str, size: int = None, since: int = None):
+        KLINE_RESOURCE = '/api/v1/kline.do'
+        if type not in Common.KLINE_TYPES:
+            raise Exception('type must be one of the entries in Common.KLINE_TYPES')
+        params = 'symbol=%s&type=%s' % (symbol, type)
+        if size is not None:
+            params += '&%d' % size
+        if since is not None:
+            params += '&%d' % since
+        return httpGet(self.__url, KLINE_RESOURCE, params)
+
     # 获取用户现货账户信息
-    def userinfo(self):
+    def userInfo(self):
         USERINFO_RESOURCE = "/api/v1/userinfo.do"
         params = {}
         params['api_key'] = self.__credential.api_key
@@ -85,7 +96,7 @@ class OKCoinSpot:
         return httpPost(self.__url, CANCEL_ORDER_RESOURCE, params)
 
     # 现货订单信息查询
-    def orderinfo(self, symbol, orderId):
+    def orderInfo(self, symbol, orderId):
         ORDER_INFO_RESOURCE = "/api/v1/order_info.do"
         params = {
             'api_key': self.__credential.api_key,
@@ -96,7 +107,7 @@ class OKCoinSpot:
         return httpPost(self.__url, ORDER_INFO_RESOURCE, params)
 
     # 现货批量订单信息查询
-    def ordersinfo(self, symbol, orderId, tradeType):
+    def ordersInfo(self, symbol, orderId, tradeType):
         ORDERS_INFO_RESOURCE = "/api/v1/orders_info.do"
         params = {
             'api_key': self.__credential.api_key,

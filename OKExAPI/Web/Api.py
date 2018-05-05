@@ -1,9 +1,9 @@
 import requests
-from . import Credential
+from . import LoginCredential
 import os
 
 
-def login(login_credential: Credential.Credential) -> str:
+def login(login_credential: LoginCredential.LoginCredential) -> str:
     headers = {
         'loginname': login_credential.login_name,
         'content-type': 'application/json',
@@ -36,7 +36,7 @@ def get_cached_token() -> str:
     return None
 
 
-def get_token(login_credential: Credential.Credential) -> str:
+def get_token(login_credential: LoginCredential.LoginCredential) -> str:
     cached_token = get_cached_token()
     if cached_token:
         return cached_token

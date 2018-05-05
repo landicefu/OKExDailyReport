@@ -52,7 +52,6 @@ def get_uuid():
 
 
 def login(login_credential: LoginCredential, save_cache: bool = True) -> str:
-    print('start login')
     import requests
 
     device_id = get_uuid()
@@ -83,11 +82,9 @@ def login(login_credential: LoginCredential, save_cache: bool = True) -> str:
         response = login_step2(device_id, token, step2code, step2type)
         token = response['data']['token']
 
-    print('token=' + token)
     if save_cache:
         with open(".cached_token", "w") as cache_file:
             print(json.dumps(response), file=cache_file)
-            print('token was saved')
     return token
 
 
@@ -100,9 +97,7 @@ def get_cached_token() -> str:
         due = datetime.fromtimestamp(token_json['data']['pastDue']/1000)
         if (due - datetime.now()).total_seconds() > 60 * 30:
             token = token_json['data']['token']
-            print('cached token is available: ' + token)
             return token
-    print('cached token is not available')
     return None
 
 

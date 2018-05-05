@@ -1,5 +1,6 @@
 # Security
 .secret.json
+.login_secret.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

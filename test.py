@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # encoding: utf-8
 
-from OKExAPI.REST.OkcoinSpotAPI import OKCoinSpot
+from OKExAPI.REST_V1.OkcoinSpotAPI import OKCoinSpot
 from OKExAPI.Common import *
 
 

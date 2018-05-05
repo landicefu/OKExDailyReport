@@ -48,6 +48,7 @@ def login(login_credential: LoginCredential, save_cache: bool = True) -> str:
         data=str(data)
     ).json()
     token = response['data']['token']
+
     if save_cache:
         with open(".cached_token", "w") as cache_file:
             print(json.dumps(response), file=cache_file)
@@ -117,4 +118,21 @@ def user_balance(token: str):
         headers=headers,
         params=params
     )
+    return response.json()
+
+
+def user_unsettlement_trades(token: str):
+    headers = {
+        'authorization': token,
+        'referer': 'https://www.okex.com/spot/trade',
+    }
+
+    params = (
+        ('symbol', 'all'),
+        ('systemType', '1'),
+        ('page', '1'),
+        ('perSize', '20'),
+    )
+
+    response = requests.get('https://www.okex.com/v2/spot/order/unsettlement', headers=headers, params=params)
     return response.json()

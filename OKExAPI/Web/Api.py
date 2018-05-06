@@ -109,6 +109,26 @@ def get_token(login_credential: LoginCredential) -> str:
     return login(login_credential)
 
 
+def get_currencies():
+    headers = {
+        'referer': 'https://www.okex.com/marketList',
+        'x-requested-with': 'XMLHttpRequest',
+    }
+
+    response = requests.get('https://www.okex.com/v2/spot/markets/currencies', headers=headers)
+    return response.json()
+
+
+def get_products():
+    headers = {
+        'referer': 'https://www.okex.com/marketList',
+        'x-requested-with': 'XMLHttpRequest',
+    }
+
+    response = requests.get('https://www.okex.com/v2/spot/markets/products', headers=headers)
+    return response.json()
+
+
 def user_bills(token: str,
                currency_id: int = -1,
                begin_date: int = 0,

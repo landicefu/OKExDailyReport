@@ -28,10 +28,15 @@ def process():
             currency = balance_data['currency']
             valuation = float(balance_data['valuation'])
             total_value_btc += valuation
+            if currency == 'USDT':
+                trading_pair = 'btc_usdt'
+            else:
+                trading_pair = currency.lower() + '_usdt'
             print(
-                "%s - %f" % (
+                "%s - %f - %s" % (
                     currency,
-                    valuation
+                    valuation,
+                    'https://www.okex.com/market?product=' + trading_pair
                 )
             )
     btc_value_usdt = float(spot.ticker('btc_usdt')['ticker']['last'])

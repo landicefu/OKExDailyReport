@@ -13,4 +13,4 @@ login_credential = Api.LoginCredential.load_from_file('.login_secret.json')
 api_credential = ApiCredential.load_from_file('.secret.json')
 token = Api.get_token(login_credential)
 
-print(Api.user_unsettlement_trades(token))
+print(Api.get_products())

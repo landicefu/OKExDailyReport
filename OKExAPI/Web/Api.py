@@ -52,8 +52,7 @@ def get_uuid():
 
 
 def login(login_credential: LoginCredential, save_cache: bool = True) -> str:
-    import requests
-
+    print('Login starts')
     device_id = get_uuid()
     headers = {
         'loginname': login_credential.login_name,
@@ -96,6 +95,7 @@ def get_cached_token() -> str:
         token_json = json.loads(text)
         due = datetime.fromtimestamp(token_json['data']['pastDue']/1000)
         if (due - datetime.now()).total_seconds() > 60 * 30:
+            print('The cache token was expired')
             token = token_json['data']['token']
             return token
     return None

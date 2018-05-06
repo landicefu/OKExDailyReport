@@ -95,9 +95,10 @@ def get_cached_token() -> str:
         token_json = json.loads(text)
         due = datetime.fromtimestamp(token_json['data']['pastDue']/1000)
         if (due - datetime.now()).total_seconds() > 60 * 30:
-            print('The cache token was expired')
             token = token_json['data']['token']
             return token
+        else:
+            print('The cache token was expired')
     return None
 
 

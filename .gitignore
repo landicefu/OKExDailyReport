@@ -4,6 +4,7 @@
 .cached_token
 .exchange_api_token
 .uuid
+.google_client_secret.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

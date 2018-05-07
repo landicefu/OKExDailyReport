@@ -176,7 +176,7 @@ def user_balance(token: str):
     return response.json()
 
 
-def user_unsettlement_trades(token: str):
+def user_unsettled_trades(token: str):
     headers = {
         'authorization': token,
         'referer': 'https://www.okex.com/spot/trade',

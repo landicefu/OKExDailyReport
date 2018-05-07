@@ -1,11 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+from typing import List, Dict, Tuple
 
 import requests
 import os
 import json
 import uuid
 from datetime import datetime
+
+from AccountInfo import Balance
 
 
 class LoginCredential:
@@ -129,14 +132,34 @@ def get_products():
     return response.json()
 
 
+class Bill:
+    def __init__(self, json_data):
+        self.type = int(json_data['type'])
+        self.size = float(json_data['size'])
+        self.currency = json_data['currency']
+        self.price = float(json_data['price'])
+
+
+def bill_types(token: str) -> Dict[int, Tuple[str, str]]:
+    headers = {
+        'authorization': token,
+        'referer': 'https://www.okex.com/account/balance/accountRecords',
+    }
+    types = requests.get('https://www.okex.com/v2/spot/bills/types', headers=headers).json()['data']
+    type_dict = {}
+    for type_item in types:
+        type_dict[type_item['code']] = (type_item['type'], type_item['desc'])
+    return type_dict
+
+
 def user_bills(token: str,
                currency_id: int = -1,
                begin_date: int = 0,
                end_date: int = 0,
                is_history: bool = False,
                page: int = 1,
-               per_page: int = 20,
-               record_type: int = 0):
+               per_page: int = 300,
+               record_type: int = 0) -> List[Bill]:
 
     headers = {
         'authorization': token,
@@ -155,7 +178,12 @@ def user_bills(token: str,
         }
     }
     response = requests.post('https://www.okex.com/v2/spot/bills/bills', headers=headers, data=str(data))
-    return response.json()
+    bill_array = response.json()['data']['billList']
+    bills = []  # type: list[Bill]
+
+    for bill in bill_array:
+        bills.append(Bill(bill))
+    return bills
 
 
 def user_balance(token: str):

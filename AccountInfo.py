@@ -1,5 +1,3 @@
-import json
-
 BTC_VALUATION_SKIP_THRESHOLD = 0.00001
 
 
@@ -9,9 +7,19 @@ def over_threshold(balance_data):
 
 
 class Balance:
-    def __init__(self, currency: str, valuation: float):
+    def __init__(self, currency: str, balance: float, hold: float, valuation: float):
         self.currency = currency
+        self.balance = balance
+        self.hold = hold
         self.valuation = valuation
+
+    @classmethod
+    def from_json(cls, json_balance):
+        return cls(
+            json_balance['currency'],
+            float(json_balance['balance']),
+            float(json_balance['hold']),
+            float(json_balance['valuation']))
 
 
 class SpotTrades:
@@ -76,6 +84,6 @@ class AccountInfo:
         self.unsettled_trades = []  # type: list[SpotTrades]
         for balance in balance_resp['data']['balance']:
             if over_threshold(balance):
-                self.balances.append(Balance(balance['currency'], balance['valuation']))
+                self.balances.append(Balance.from_json(balance))
         for unsettled_trade in unsettled_trades['data']['orders']:
             self.unsettled_trades.append(SpotTrades.from_json(unsettled_trade))

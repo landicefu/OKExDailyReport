@@ -1,3 +1,5 @@
+from datetime import datetime
+
 BTC_VALUATION_SKIP_THRESHOLD = 0.00001
 
 
@@ -75,8 +77,9 @@ class SpotTrades:
 
 
 class AccountInfo:
-    def __init__(self, balance_resp, btc_usdt_price: float, usd_target_price: float, target_currency: str,
+    def __init__(self, time: datetime, balance_resp, btc_usdt_price: float, usd_target_price: float, target_currency: str,
                  unsettled_trades):
+        self.time = time
         self.btc_usdt_price = btc_usdt_price
         self.usd_target_price = usd_target_price
         self.target_currency = target_currency
@@ -87,3 +90,6 @@ class AccountInfo:
                 self.balances.append(Balance.from_json(balance))
         for unsettled_trade in unsettled_trades['data']['orders']:
             self.unsettled_trades.append(SpotTrades.from_json(unsettled_trade))
+
+    def get_date_str(self) -> str:
+        return self.time.strftime('%Y%m%d')

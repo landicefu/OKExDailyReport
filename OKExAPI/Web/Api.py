@@ -191,3 +191,26 @@ def user_unsettled_trades(token: str):
 
     response = requests.get('https://www.okex.com/v2/spot/order/unsettlement', headers=headers, params=params)
     return response.json()
+
+
+def user_history_trades(
+        token: str, symbol: str, page: int = 1, per_page: int = 20,
+        start_millis: int = 0, end_millis: int = int(datetime.now().timestamp() * 1000)):
+
+    headers = {
+        'authorization': token,
+        'referer': 'https://www.okex.com/spot/orders',
+    }
+
+    params = (
+        ('page', page),
+        ('perPage', per_page),
+        ('systemType', '-1'),
+        ('symbol', symbol),
+        ('entrustType', 'history'),
+        ('startDateMillis', start_millis),
+        ('endDateMillis', end_millis),
+    )
+
+    response = requests.get('https://www.okex.com/v2/spot/order/history', headers=headers, params=params)
+    return response.json()

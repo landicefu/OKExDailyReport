@@ -1,3 +1,4 @@
+from datetime import datetime
 from OKExAPI.Common import ApiCredential
 from OKExAPI import Web
 from OKExAPI.REST_V1 import OkcoinSpotAPI
@@ -23,6 +24,8 @@ def process():
     api_credential = ApiCredential.load_from_file('.secret.json')
     token = Web.Api.get_token(login_credential)
     spot = OkcoinSpotAPI.OKCoinSpot(OKEX_BASE_URL, api_credential)
+    print(Web.Api.user_history_trades(token, 'btc_usdt', page=1, per_page=300))
+    return
     balance = Web.Api.user_balance(token)
     btc_usdt_price = spot.ticker('btc_usdt')['ticker']['last']
     usd_target_price = ExchangeRateApi.get_exchange_rate(Util.read_all('.exchange_api_token'), 'usd', TARGET_CURRENCY)

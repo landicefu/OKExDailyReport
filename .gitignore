@@ -1,10 +1,10 @@
 # Security
+.google_service_account_secret.json
 .secret.json
 .login_secret.json
 .cached_token
 .exchange_api_token
 .uuid
-.google_client_secret.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

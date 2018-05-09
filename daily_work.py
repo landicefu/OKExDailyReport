@@ -91,7 +91,8 @@ def create_google_spreadsheet(gc: gspread.Client) -> Spreadsheet:
     balance_worksheet.update_cell(2, 1, '=SUM(Balance!E:E)')
     balance_worksheet.update_cell(2, 2, '=SUM(Balance!F:F)')
 
-    create_worksheet(spreadsheet, 'Unsettled Trades', 1, len(COLUMN_NAMES_UNSETTLE))
+    worksheet = create_worksheet(spreadsheet, 'Unsettled Trades', 1, len(COLUMN_NAMES_UNSETTLE))
+    worksheet.append_row(COLUMN_NAMES_UNSETTLE)
 
     create_worksheet(spreadsheet, 'Trade History', 1, len(COLUMN_NAMES_TRADE_HISTORY))
 
